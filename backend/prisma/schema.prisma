@@ -1,86 +1,397 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
   provider = "prisma-client-js"
 }
+
 
 datasource db {
   provider = "postgresql"
 }
 
 
+
 model User {
-  id       Int @id @default(autoincrement())
-  name     String
-  email    String @unique
-  password String
-  role     String @default("USER")
-
-  events Event[]
-  rides Ride[]
-  requests RideRequest[]
-
-  createdAt DateTime @default(now())
-}
-
-model Event {
-  id          Int @id @default(autoincrement())
-
-  title       String
-  description String?
-  location    String
-  date        DateTime
-
-  creatorId   Int
-  creator     User @relation(fields: [creatorId], references: [id])
-
-  rides Ride[]
-
-  createdAt   DateTime @default(now())
-}
-
-model Ride {
 
   id Int @id @default(autoincrement())
 
-  from String
-  to String
+
+  name String
+
+
+  email String @unique
+
+
+  password String
+
+
+  role String @default("USER")
+
+
+
+  events Event[]
+
+
+  rides Ride[]
+
+
+  requests RideRequest[]
+
+
+
+  // Smart Event
+
+  emergencyReports EmergencyReport[]
+
+
+
+  createdAt DateTime @default(now())
+
+}
+
+
+
+
+
+
+
+model Event {
+
+
+  id Int @id @default(autoincrement())
+
+
+  title String
+
+
+  description String?
+
+
+  location String
+
 
   date DateTime
+
+
+
+
+  creatorId Int
+
+
+  creator User @relation(fields: [creatorId], references: [id])
+
+
+
+
+  rides Ride[]
+
+
+
+  // Smart Event
+
+  emergencyReports EmergencyReport[]
+
+
+  zones FestivalZone[]
+
+
+  crowdPoints CrowdPoint[]
+
+
+
+
+
+  createdAt DateTime @default(now())
+
+
+}
+
+
+
+
+
+
+
+
+
+model Ride {
+
+
+  id Int @id @default(autoincrement())
+
+
+
+  from String
+
+
+  to String
+
+
+
+  date DateTime
+
+
 
   seats Int
 
 
+
+
+
   driverId Int
+
+
   driver User @relation(fields: [driverId], references: [id])
 
 
+
+
+
   eventId Int
+
+
   event Event @relation(fields: [eventId], references: [id])
 
+
+
+
+
   requests RideRequest[]
-  
+
+
+
+
+
   createdAt DateTime @default(now())
+
+
 }
+
+
+
+
+
+
+
+
 
 model RideRequest {
 
+
   id Int @id @default(autoincrement())
+
 
 
   status String @default("PENDING")
 
 
+
+
+
   userId Int
-  user User @relation(fields:[userId], references:[id])
+
+
+  user User @relation(fields: [userId], references: [id])
+
+
+
 
 
   rideId Int
-  ride Ride @relation(fields:[rideId], references:[id])
+
+
+  ride Ride @relation(fields: [rideId], references: [id])
+
+
+
 
 
   createdAt DateTime @default(now())
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// SMART EVENT MODULE
+// =================================
+
+
+
+
+
+
+
+model EmergencyReport {
+
+
+  id Int @id @default(autoincrement())
+
+
+
+  type String
+  // MEDICAL
+  // SECURITY
+  // FIRE
+  // OTHER
+
+
+
+  description String
+
+
+
+  lat Float
+
+
+  lng Float
+
+
+
+
+
+  status String @default("OPEN")
+  // OPEN
+  // ACCEPTED
+  // RESOLVED
+
+
+
+
+
+  userId Int
+
+
+  user User @relation(fields: [userId], references: [id])
+
+
+
+
+
+  eventId Int
+
+
+  event Event @relation(fields: [eventId], references: [id])
+
+
+
+
+
+  createdAt DateTime @default(now())
+
+
+}
+
+
+
+
+
+
+
+
+
+model FestivalZone {
+
+
+  id Int @id @default(autoincrement())
+
+
+
+
+  name String
+
+
+
+
+  type String
+  // STAGE
+  // FOOD
+  // EXIT
+  // MEDICAL
+  // TOILET
+
+
+
+
+
+  lat Float
+
+
+  lng Float
+
+
+
+
+
+  capacity Int
+
+
+
+
+
+  eventId Int
+
+
+  event Event @relation(fields: [eventId], references: [id])
+
+
+
+
+
+  createdAt DateTime @default(now())
+
+
+}
+
+
+
+
+
+
+
+
+
+model CrowdPoint {
+
+
+  id Int @id @default(autoincrement())
+
+
+
+  lat Float
+
+
+  lng Float
+
+
+
+
+  intensity Float
+  // 0-1 natężenie tłumu
+
+
+
+
+
+  eventId Int
+
+
+  event Event @relation(fields: [eventId], references: [id])
+
+
+
+
+
+  createdAt DateTime @default(now())
+
+
 }

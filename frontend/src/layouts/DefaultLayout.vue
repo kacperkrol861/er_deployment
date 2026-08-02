@@ -2,9 +2,12 @@
 
 <div class="app-layout">
 
+
   <VaNavbar class="navbar">
 
+
     <template #left>
+
 
       <RouterLink
         to="/dashboard"
@@ -19,7 +22,9 @@
 
       </RouterLink>
 
+
     </template>
+
 
 
 
@@ -27,21 +32,59 @@
 
     <template #center>
 
+
       <nav class="menu">
 
+
         <RouterLink to="/dashboard">
+
           Dashboard
+
         </RouterLink>
+
+
+
+
 
         <RouterLink to="/events">
+
           Events
+
         </RouterLink>
+
+
+
+
 
         <RouterLink to="/rides">
+
           Rides
+
         </RouterLink>
 
+
+
+
+
+        <RouterLink
+          to="/smart-event"
+          class="smart-link"
+        >
+
+          Smart Event
+
+          <span class="star">
+            ★
+          </span>
+
+
+        </RouterLink>
+
+
+
+
       </nav>
+
 
     </template>
 
@@ -49,21 +92,41 @@
 
 
 
+
+
+
     <template #right>
+
+
 
       <NotificationBell />
 
+
+
+
+
+
       <VaDropdown placement="bottom-end">
+
 
         <template #anchor>
 
+
           <VaAvatar
+
             color="primary"
+
             size="36px"
+
             class="avatar"
+
           >
+
             {{ userInitial }}
+
+
           </VaAvatar>
+
 
         </template>
 
@@ -71,51 +134,108 @@
 
 
 
+
+
         <VaDropdownContent>
+
+
 
           <div class="dropdown">
 
+
+
+
+
+
             <div class="profile">
 
+
+
               <VaAvatar
+
                 color="primary"
+
                 size="42px"
+
               >
+
                 {{ userInitial }}
+
+
               </VaAvatar>
+
+
+
+
 
               <div>
 
+
+
                 <strong>
+
                   {{ user?.name }}
+
                 </strong>
 
+
+
+
                 <span>
+
                   {{ user?.email }}
+
                 </span>
+
+
 
               </div>
 
+
+
             </div>
+
+
+
+
+
+
 
             <VaDivider />
 
 
 
+
+
+
+
             <div class="menu-section">
+
+
+
+
 
               <div
                 class="menu-item"
                 @click="router.push('/account')"
               >
 
+
                 <Icon icon="mdi:account-circle-outline" />
 
+
                 <span>
+
                   My account
+
                 </span>
 
+
               </div>
+
+
+
+
 
 
 
@@ -126,13 +246,22 @@
                 @click="router.push('/my-rides')"
               >
 
+
                 <Icon icon="mdi:car-outline" />
 
+
                 <span>
+
                   My rides
+
                 </span>
 
+
               </div>
+
+
+
+
 
 
 
@@ -143,34 +272,82 @@
                 @click="router.push('/my-events')"
               >
 
+
                 <Icon icon="mdi:calendar-star" />
 
+
                 <span>
+
                   My events
+
                 </span>
+
 
               </div>
 
+
+
+
+
             </div>
+
+
+
+
+
+
 
             <VaDivider />
 
+
+
+
+
+
+
             <VaButton
+
               preset="secondary"
+
               size="small"
+
               block
+
               @click="logout"
+
             >
+
               Logout
+
+
             </VaButton>
+
+
+
+
+
 
           </div>
 
+
+
+
         </VaDropdownContent>
+
+
+
 
       </VaDropdown>
 
+
+
+
+
     </template>
+
+
+
+
 
   </VaNavbar>
 
@@ -178,70 +355,152 @@
 
 
 
+
+
+
   <main class="content">
+
 
     <RouterView />
 
+
   </main>
+
+
+
+
 
 </div>
 
 </template>
 
+
+
+
+
+
+
+
+
 <script setup>
 
+
 import {
-  computed
+
+computed
+
 } from "vue";
 
+
+
 import {
-  useRouter
+
+useRouter
+
 } from "vue-router";
 
-import {
-  Icon
-} from "@iconify/vue";
+
 
 import {
-  useAuthStore
+
+Icon
+
+} from "@iconify/vue";
+
+
+
+import {
+
+useAuthStore
+
 } from "@/stores/auth.store";
+
+
 
 import NotificationBell from "@/components/notifications/NotificationBell.vue";
 
+
+
+
+
+
 const auth = useAuthStore();
+
 
 const router = useRouter();
 
-const user = computed(() => {
+
+
+
+
+
+
+const user = computed(()=>{
+
 
   return auth.user;
 
+
 });
 
-const userInitial = computed(() => {
+
+
+
+
+
+
+
+const userInitial = computed(()=>{
+
 
   return user.value?.name
-    ?.charAt(0)
-    ?.toUpperCase();
+
+  ?.charAt(0)
+
+  ?.toUpperCase();
+
 
 });
 
-const logout = () => {
+
+
+
+
+
+
+
+const logout = ()=>{
+
 
   router.push("/logout");
 
+
 };
+
+
+
+
 
 </script>
 
 
+
+
+
+
+
+
+
 <style scoped>
 
+
 .app-layout {
+
 
   min-height:100vh;
 
   background:#f8fafc;
+
 
 }
 
@@ -253,17 +512,23 @@ const logout = () => {
 
 .navbar {
 
+
   height:68px;
+
 
   padding:0 32px;
 
+
   background:rgba(255,255,255,.9);
 
+
   backdrop-filter:blur(12px);
+
 
   box-shadow:
 
   0 2px 15px rgba(0,0,0,.06);
+
 
 }
 
@@ -275,11 +540,15 @@ const logout = () => {
 
 .navbar :deep(.va-navbar__right){
 
+
   display:flex;
+
 
   align-items:center;
 
+
   gap:18px;
+
 
 }
 
@@ -291,21 +560,30 @@ const logout = () => {
 
 .logo {
 
+
   display:flex;
+
 
   align-items:center;
 
+
   gap:10px;
+
 
   font-size:21px;
 
+
   font-weight:800;
+
 
   letter-spacing:-.5px;
 
+
   color:var(--va-primary);
 
+
   text-decoration:none;
+
 
 }
 
@@ -317,25 +595,36 @@ const logout = () => {
 
 .logo-mark {
 
+
   width:32px;
+
 
   height:32px;
 
+
   display:flex;
+
 
   align-items:center;
 
+
   justify-content:center;
+
 
   border-radius:10px;
 
+
   background:var(--va-primary);
+
 
   color:white;
 
+
   font-size:18px;
 
+
   font-weight:800;
+
 
 }
 
@@ -347,11 +636,15 @@ const logout = () => {
 
 .menu {
 
+
   display:flex;
+
 
   align-items:center;
 
+
   gap:36px;
+
 
 }
 
@@ -363,17 +656,24 @@ const logout = () => {
 
 .menu a {
 
+
   position:relative;
+
 
   color:#64748b;
 
+
   text-decoration:none;
+
 
   font-size:15px;
 
+
   font-weight:600;
 
+
   transition:.25s;
+
 
 }
 
@@ -385,7 +685,9 @@ const logout = () => {
 
 .menu a:hover {
 
+
   color:var(--va-primary);
+
 
 }
 
@@ -397,7 +699,9 @@ const logout = () => {
 
 .menu a.router-link-active {
 
+
   color:var(--va-primary);
+
 
 }
 
@@ -409,21 +713,73 @@ const logout = () => {
 
 .menu a.router-link-active::after {
 
+
   content:"";
+
 
   position:absolute;
 
+
   left:0;
+
 
   bottom:-10px;
 
+
   width:100%;
+
 
   height:3px;
 
+
   border-radius:20px;
 
+
   background:var(--va-primary);
+
+
+}
+
+
+
+
+
+
+
+.smart-link{
+
+
+  display:flex;
+
+
+  align-items:center;
+
+
+  gap:6px;
+
+
+}
+
+
+
+
+
+
+
+.star{
+
+
+  color:#f59e0b;
+
+
+  font-size:13px;
+
+
+  position:relative;
+
+
+  top:-5px;
+
 
 }
 
@@ -435,9 +791,12 @@ const logout = () => {
 
 .avatar {
 
+
   cursor:pointer;
 
+
   transition:.25s;
+
 
 }
 
@@ -449,7 +808,9 @@ const logout = () => {
 
 .avatar:hover {
 
+
   transform:scale(1.08);
+
 
 }
 
@@ -461,13 +822,18 @@ const logout = () => {
 
 .content {
 
+
   width:100%;
+
 
   max-width:1400px;
 
+
   margin:auto;
 
+
   padding:32px;
+
 
 }
 
@@ -479,9 +845,12 @@ const logout = () => {
 
 .dropdown {
 
+
   min-width:280px;
 
+
   padding:18px;
+
 
 }
 
@@ -493,11 +862,15 @@ const logout = () => {
 
 .profile {
 
+
   display:flex;
+
 
   align-items:center;
 
+
   gap:12px;
+
 
 }
 
@@ -509,9 +882,12 @@ const logout = () => {
 
 .profile strong {
 
+
   display:block;
 
+
   font-size:15px;
+
 
 }
 
@@ -523,13 +899,18 @@ const logout = () => {
 
 .profile span {
 
+
   display:block;
+
 
   margin-top:3px;
 
+
   font-size:13px;
 
+
   color:#64748b;
+
 
 }
 
@@ -541,13 +922,18 @@ const logout = () => {
 
 .menu-section {
 
+
   display:flex;
+
 
   flex-direction:column;
 
+
   gap:5px;
 
+
   margin:12px 0;
+
 
 }
 
@@ -559,23 +945,33 @@ const logout = () => {
 
 .menu-item {
 
+
   display:flex;
+
 
   align-items:center;
 
+
   gap:12px;
+
 
   padding:11px 12px;
 
+
   border-radius:10px;
+
 
   cursor:pointer;
 
+
   transition:.2s;
+
 
   color:#334155;
 
+
   font-weight:600;
+
 
 }
 
@@ -587,9 +983,12 @@ const logout = () => {
 
 .menu-item:hover {
 
+
   background:#f1f5f9;
 
+
   color:var(--va-primary);
+
 
 }
 
@@ -601,9 +1000,12 @@ const logout = () => {
 
 .menu-item svg {
 
+
   font-size:22px;
 
+
   color:var(--va-primary);
+
 
 }
 
@@ -615,7 +1017,9 @@ const logout = () => {
 
 .menu-item span {
 
+
   font-size:14px;
+
 
 }
 
@@ -628,21 +1032,31 @@ const logout = () => {
 @media(max-width:900px){
 
 
+
 .navbar {
+
 
   padding:0 20px;
 
+
 }
+
+
 
 
 .menu {
 
+
   gap:20px;
 
+
 }
 
 
+
 }
+
+
 
 
 
@@ -653,56 +1067,83 @@ const logout = () => {
 @media(max-width:768px){
 
 
+
 .navbar {
+
 
   padding:0 16px;
 
+
 }
+
+
 
 
 
 .logo {
 
+
   font-size:18px;
 
+
 }
+
+
 
 
 
 .logo-mark {
 
+
   width:28px;
+
 
   height:28px;
 
+
 }
+
+
 
 
 
 .menu {
 
+
   display:none;
 
+
 }
+
+
 
 
 
 .content {
 
+
   padding:20px;
 
+
 }
+
+
 
 
 
 .dropdown {
 
+
   min-width:240px;
 
+
 }
 
 
+
 }
+
+
 
 
 

@@ -20,6 +20,8 @@ import myRideRequestView from "../views/rides/myRideRequestView.vue";
 import AccountView from "../views/account/AccountView.vue";
 import MyRidesView from "../views/rides/MyRidesView.vue";
 import MyEventsView from "../views/events/MyEventsView.vue";
+import SmartEventView from "../views/smartEvent/SmartEventView.vue";
+
 
 const router = createRouter({
 
@@ -116,7 +118,11 @@ const router = createRouter({
                 {
                     path:"my-events",
                     component:MyEventsView
-                }
+                },
+                {
+                    path:"smart-event",
+                    component:SmartEventView
+                },
             ]
 
         }

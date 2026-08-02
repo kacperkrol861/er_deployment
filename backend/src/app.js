@@ -4,6 +4,7 @@ const authMiddleware = require("./middleware/auth.middleware");
 const eventRoutes = require("./routes/event.routes");
 const rideRoutes = require("./routes/ride.routes");
 const rideRequestRoutes = require("./routes/rideRequest.routes");
+const smartEventRoutes = require("./routes/smartEvent.routes");
 const cors = require("cors");
 const app = express();
 app.use(cors({
@@ -18,6 +19,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/rides", rideRoutes);
 app.use("/api", rideRequestRoutes);
-
+app.use("/api", smartEventRoutes);
 
 module.exports = app;
