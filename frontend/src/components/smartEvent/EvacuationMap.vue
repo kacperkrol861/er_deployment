@@ -215,17 +215,27 @@ Evacuation route
 
 <script setup>
 
+
 import {
+
 ref,
+
+watch,
+
 onMounted,
-onBeforeUnmount,
-watch
+
+onBeforeUnmount
+
 } from "vue";
 
 
+
 import {
+
 Icon
+
 } from "@iconify/vue";
+
 
 
 import L from "leaflet";
@@ -234,14 +244,20 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 
+
 import {
+
 cities
+
 } from "@/data/cities";
 
 
 
 
-const props = defineProps({
+
+
+
+const props=defineProps({
 
 event:Object
 
@@ -249,7 +265,12 @@ event:Object
 
 
 
-const mapContainer = ref(null);
+
+
+
+
+
+const mapContainer=ref(null);
 
 
 let map=null;
@@ -258,7 +279,12 @@ let map=null;
 let layers=[];
 
 
-let animation=null;
+let animationTimers=[];
+
+
+
+
+
 
 
 
@@ -268,21 +294,72 @@ const clearMap=()=>{
 
 layers.forEach(layer=>{
 
+
 layer.remove();
 
+
 });
+
 
 
 layers=[];
 
 
-if(animation){
 
-clearInterval(animation);
 
-animation=null;
 
-}
+animationTimers.forEach(timer=>{
+
+
+clearInterval(timer);
+
+
+});
+
+
+
+animationTimers=[];
+
+
+
+};
+
+
+
+
+
+
+
+
+
+const createIcon=(emoji,className)=>{
+
+
+return L.divIcon({
+
+
+className,
+
+
+html:
+
+`
+
+<div class="custom-marker">
+
+${emoji}
+
+</div>
+
+`,
+
+iconSize:[45,45],
+
+iconAnchor:[22,22]
+
+
+});
+
 
 };
 
@@ -303,25 +380,14 @@ const marker=L.marker(
 
 {
 
-icon:L.divIcon({
 
-className:"custom-marker",
+icon:createIcon(
 
-html:`
+emoji,
 
-<div class="marker-icon">
+"custom-point"
 
-${emoji}
-
-</div>
-
-`,
-
-iconSize:[50,50],
-
-iconAnchor:[25,25]
-
-})
+)
 
 }
 
@@ -331,17 +397,35 @@ iconAnchor:[25,25]
 
 
 
-marker.bindPopup(`
 
-<h3>${title}</h3>
 
-<p>${text}</p>
+marker.bindPopup(
 
-`);
+`
+
+<div>
+
+<h3>
+${emoji} ${title}
+</h3>
+
+
+<p>
+${text}
+</p>
+
+
+</div>
+
+`
+
+);
+
 
 
 
 layers.push(marker);
+
 
 
 };
@@ -363,7 +447,11 @@ return;
 
 
 
+
+
+
 const city=cities[props.event.location];
+
 
 
 if(!city)
@@ -374,11 +462,26 @@ return;
 
 
 
+
 if(map){
+
 
 map.remove();
 
+
 }
+
+
+
+
+
+
+clearMap();
+
+
+
+
+
 
 
 
@@ -390,11 +493,19 @@ mapContainer.value
 
 .setView(
 
-[city.lat,city.lng],
+[
+
+city.lat,
+
+city.lng
+
+],
 
 15
 
 );
+
+
 
 
 
@@ -421,12 +532,22 @@ attribution:"© OpenStreetMap"
 
 
 
-// EVENT ZONE
+
+
+
+
+// GŁÓWNA STREFA EVENTU
 
 
 const eventZone=L.circle(
 
-[city.lat,city.lng],
+[
+
+city.lat,
+
+city.lng
+
+],
 
 {
 
@@ -436,26 +557,16 @@ color:"#2563eb",
 
 fillColor:"#3b82f6",
 
-fillOpacity:.12,
+fillOpacity:.15,
 
 weight:3
+
 
 }
 
 )
 
 .addTo(map);
-
-
-
-eventZone.bindPopup(`
-
-<h3>Event area</h3>
-
-<p>Main festival zone</p>
-
-`);
-
 
 
 
@@ -468,52 +579,21 @@ layers.push(eventZone);
 
 
 
+eventZone.bindPopup(
 
-// SAFE ZONE
+`
 
+<h3>
+🎪 Event area
+</h3>
 
-const safeZone=L.circle(
+<p>
+Main crowd zone
+</p>
 
-[
+`
 
-city.lat+0.004,
-
-city.lng+0.004
-
-],
-
-{
-
-radius:150,
-
-color:"#16a34a",
-
-fillColor:"#22c55e",
-
-fillOpacity:.35,
-
-weight:3
-
-}
-
-)
-
-.addTo(map);
-
-
-
-safeZone.bindPopup(`
-
-<h3>🟢 Safe zone</h3>
-
-<p>Assembly point after evacuation</p>
-
-`);
-
-
-
-
-layers.push(safeZone);
+);
 
 
 
@@ -523,7 +603,9 @@ layers.push(safeZone);
 
 
 
-// EXITS
+
+
+// WYJŚCIA AWARYJNE
 
 
 const exits=[
@@ -533,22 +615,24 @@ const exits=[
 
 lat:city.lat+0.003,
 
-lng:city.lng+0.005,
+lng:city.lng+0.004,
 
 name:"North exit"
 
 },
 
 
+
 {
 
 lat:city.lat-0.003,
 
-lng:city.lng-0.004,
+lng:city.lng-0.003,
 
 name:"South exit"
 
 },
+
 
 
 {
@@ -557,12 +641,15 @@ lat:city.lat+0.001,
 
 lng:city.lng-0.006,
 
-name:"Emergency gate"
+name:"West exit"
 
 }
 
 
+
 ];
+
+
 
 
 
@@ -592,14 +679,16 @@ exit.name,
 
 
 
-
 const route=L.polyline(
 
 [
 
+
 [city.lat,city.lng],
 
+
 [exit.lat,exit.lng]
+
 
 ],
 
@@ -609,7 +698,9 @@ color:"#ef4444",
 
 weight:7,
 
-dashArray:"20,15"
+dashArray:"15,15",
+
+opacity:.9
 
 }
 
@@ -619,13 +710,18 @@ dashArray:"20,15"
 
 
 
+
+
+
 layers.push(route);
 
 
 
 
 
+
 animateRoute(route);
+
 
 
 });
@@ -638,21 +734,25 @@ animateRoute(route);
 
 
 
-// SUPPORT POINTS
 
 
-const support=[
+
+// PUNKTY WSPARCIA
+
+
+const supports=[
 
 
 {
 
 lat:city.lat+0.002,
 
-lng:city.lng-0.003,
+lng:city.lng-0.002,
 
 name:"Medical point"
 
 },
+
 
 
 {
@@ -661,9 +761,10 @@ lat:city.lat-0.001,
 
 lng:city.lng+0.004,
 
-name:"Security"
+name:"Security point"
 
 }
+
 
 
 ];
@@ -674,7 +775,7 @@ name:"Security"
 
 
 
-support.forEach(point=>{
+supports.forEach(point=>{
 
 
 addMarker(
@@ -692,6 +793,7 @@ point.name,
 );
 
 
+
 });
 
 
@@ -702,28 +804,33 @@ point.name,
 
 
 
-// DANGER ZONE
 
 
-const danger=L.circle(
+// STREFA BEZPIECZNA
+
+
+const safeZone=L.circle(
 
 [
 
-city.lat-0.002,
+city.lat+0.005,
 
-city.lng+0.002
+city.lng+0.005
 
 ],
 
 {
 
-radius:120,
+radius:180,
 
-color:"#f97316",
+color:"#16a34a",
 
-fillColor:"#fb923c",
+fillColor:"#22c55e",
 
-fillOpacity:.3
+fillOpacity:.35,
+
+weight:3
+
 
 }
 
@@ -733,18 +840,34 @@ fillOpacity:.3
 
 
 
-danger.bindPopup(`
-
-<h3>⚠️ Attention zone</h3>
-
-<p>Potential crowd congestion area</p>
-
-`);
+layers.push(safeZone);
 
 
 
 
-layers.push(danger);
+
+
+
+safeZone.bindPopup(
+
+`
+
+<h3>
+🟢 Safe zone
+</h3>
+
+
+<p>
+Assembly point after evacuation
+</p>
+
+`
+
+);
+
+
+
+
 
 
 
@@ -758,19 +881,21 @@ layers.push(danger);
 
 
 
-const animateRoute=(route)=>{
+const animateRoute=(line)=>{
 
 
 let offset=0;
 
 
-animation=setInterval(()=>{
+
+const timer=setInterval(()=>{
 
 
 offset-=10;
 
 
-route.setStyle({
+
+line.setStyle({
 
 dashOffset:offset
 
@@ -780,7 +905,12 @@ dashOffset:offset
 },300);
 
 
+
+animationTimers.push(timer);
+
+
 };
+
 
 
 
@@ -796,16 +926,12 @@ watch(
 ()=>{
 
 
-clearMap();
-
-
 createMap();
 
 
 }
 
 );
-
 
 
 
@@ -827,11 +953,16 @@ createMap();
 
 
 
-
 onBeforeUnmount(()=>{
 
 
-clearMap();
+animationTimers.forEach(timer=>{
+
+
+clearInterval(timer);
+
+
+});
 
 
 if(map)
@@ -840,6 +971,7 @@ map.remove();
 
 
 });
+
 
 
 </script>
